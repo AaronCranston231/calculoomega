@@ -2,7 +2,7 @@ import xlwings as xw
 import csv
 import numpy as np
 
-excel_path = r"C:\Users\Ulises\GUI_OMEGA\Calculo Tubulares.xlsx"
+excel_path = r"C:\Users\Ulises\GUI_OMEGA\Calculo\Calculo Tubulares.xlsx"
 
 # Abrir Excel en segundo plano
 app = xw.App(visible=False)
@@ -450,6 +450,7 @@ if tipo_tubular == "3" :
             #print(f'y ohm_alambre : {ohm_alambre}')
             print(f'Diametro final tubo : {dimension_diam_tubo} "')
             #print(f'Diam alambre : {diam_alambre}')
+            print(f'radio : {radio_interno}')
             print(f'ml son : {ml}')
             print(f'Largo : {desarrollo_tubo} mm')
             print(f'Calibre: {calibre}')
