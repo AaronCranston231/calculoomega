@@ -198,26 +198,7 @@ if tipo_tubular == "2" :
           
     else:
         pass 
-    
-    
-    
-    
-    #'''
-    
-    
-    '''
-    
-    #ESTO DE AQUI FUNCIONA
-    
-    zc = float(63.512)
-    largo_tub = float(73.512)
-    Ohm_resis = 96
-    
-    
-    
-    '''
-    
-    
+        
     for fila in datos:
         calibre = fila["Calibre"]
         diam_alambre = fila["ESPEC"]

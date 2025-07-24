@@ -1,4 +1,4 @@
-def calcular_tubular_w(diam_tubo: str, watts: float, volts: float, ancho: float, largo_tub: float, largo2: float, tornillos: float = 80):
+def calcular_tubular_w(diam_tubo: str, watts: float, volts: float, ancho: float, largo_tub: float, largo2: float, tornillos: float ):
     import csv
     import numpy as np
 
@@ -14,6 +14,8 @@ def calcular_tubular_w(diam_tubo: str, watts: float, volts: float, ancho: float,
 
     amps = watts / volts
     ohms = volts / amps
+    ohms_tolerancia_arriba = ohms *1.05
+    ohms_tolerancia_abajo = ohms *0.95
 
     # --- Cálculo de geometría (idéntico a tu código) ---
     if diam_tubo_val == 1:
@@ -84,6 +86,8 @@ def calcular_tubular_w(diam_tubo: str, watts: float, volts: float, ancho: float,
                 "volts": volts,
                 "amps": amps,
                 "ohms": ohms,
+                "ohms_tol_ar" : ohms_tolerancia_arriba,
+                "ohms_tol_ab" : ohms_tolerancia_abajo,
                 "ohm_alambre": ohm_alambre,
                 "diam_tubo": dimension_diam_tubo,  # Usa el string "3/8" o "1/2"
                 "diam_alambre": diam_alambre,

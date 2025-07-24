@@ -5,7 +5,7 @@ import sys
 import os
 from tubularu import calcular_tubular_u
 from datetime import datetime
-from dibujo_U import agregar_texto_centrado
+from dibujo_U import agregar_texto_centrado_u
 from dibujo_W import agregar_texto_centradoW
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "Orden_final")))
 from PDFU import generar_pdf_U  # o la función que definiste
@@ -570,10 +570,10 @@ def run_power_calculator_app():
             labels = ["Voltaje", "Potencia", "Longitud", "Diámetro"]
             back_tab = "Tubulares"
         elif tab_name == "Tubular en U":
-            labels = ["Volts", "Watts", "Largo", "Ancho"]
+            labels = ["Cliente","Numero_de_Orden","unidades","Elementos_por_unidad","Volts", "Watts", "Largo", "Ancho", "Tornillo"]
             back_tab = "Tubulares"
         elif tab_name == "Tubular en W":
-            labels = ["Volts", "Watts", "Largo", "Largo2", "Ancho"]
+            labels = ["Cliente","Numero_de_Orden","unidades","Elementos_por_unidad","Volts", "Watts", "Largo", "Largo2", "Ancho", "Tornillo"]
             back_tab = "Tubulares"
         elif tab_name == "Tubular Brida":
             labels = ["Voltaje", "Potencia", "Longitud", "Diámetro Brida"]
@@ -808,17 +808,22 @@ def run_power_calculator_app():
                     output_text += f"\nDiámetro Seleccionado: {selected_diameter}"
                 
                 # Capturar los valores de Voltaje y Potencia en variables
+                cliente = entries["Cliente"].get()
+                N_orden = entries["Numero_de_Orden"].get()
+                unidades = entries["unidades"].get()
+                elementos_por_unidad = entries["Elementos_por_unidad"].get()
                 volts_value = entries["Volts"].get()
                 watts_value = entries["Watts"].get()
                 largo_value = entries["Largo"].get()
                 ancho_value = entries["Ancho"].get()
+                tornillos_value = entries["Tornillo"].get()
 
                 
-                # Aquí puedes usar volts_value y watts_value para tus cálculos o procesamiento
-                # Por ejemplo, imprimirlos en la consola o en el text_widget
-                output_text += f"\n\nValores capturados para cálculos:"
-                output_text += f"\nVoltaje: {volts_value}"
-                output_text += f"\nPotencia: {watts_value}"
+                # # Aquí puedes usar volts_value y watts_value para tus cálculos o procesamiento
+                # # Por ejemplo, imprimirlos en la consola o en el text_widget
+                # output_text += f"\n\nValores capturados para cálculos:"
+                # output_text += f"\nVoltaje: {volts_value}"
+                # output_text += f"\nPotencia: {watts_value}"
                 
                 # Ejemplo de uso: convertir a float (manejar errores si no son números)
                 try:
@@ -826,6 +831,10 @@ def run_power_calculator_app():
                     watts = float(watts_value)
                     largo = float(largo_value)
                     ancho = float(ancho_value)
+                    tornillos = float(tornillos_value)
+                    elementos_por_unidad = float(elementos_por_unidad)
+                    unidades = float(unidades)
+                    piezas = elementos_por_unidad*unidades
                     
                     
                     results = calcular_tubular_u(
@@ -836,85 +845,69 @@ def run_power_calculator_app():
                         ancho=ancho,
                         tornillos=70
                     )
-                    output_text += f"\n\nVoltaje (float): {volts}"
-                    output_text += f"\nPotencia (float): {watts}"
+                    # output_text += f"\n\nVoltaje (float): {volts}"
+                    # output_text += f"\nPotencia (float): {watts}"
              #   except ValueError:
               #      output_text += "\nError: Voltaje o Potencia no son números válidos."
+                    fecha_hoy = datetime.now().strftime("%d/%m/%Y")
+                    datos_pdf = {
+                        "cliente": str(cliente),
+                        "orden": str(N_orden),
+                        "unidades": str(unidades),
+                        "elementos_por_unidad": str(elementos_por_unidad),
+                        "fecha": fecha_hoy,
+                        "piezas": str(piezas),
+                        "entrega": "25/07/2025",
+                        "watts": watts_value,
+                        "volts": volts_value,
+                        "Material": "Acero Inoxidable",
+                        "Diametro": selected_diameter,
+                    }
+
                     if results["valido"]:
                         print("✅ Calibre válido:", results["calibre"])
                         print("📏 Separación:", results["separacion"])
-                        amps_calc = results["amps"]
-                        ohms_calc = results["ohms"]
-                        calibre_calc = results["calibre"]
-                        desarrollo_tubo = results["largo_tubo"]
-                        ohms_bobina = results["bobina_ohms"]
-                        husillo = results ["husillo"]
-                        bobina_sin_estirar = results["bobina_sin_estirar"]
-                        cortar_tubo = results["cortar_tubo"]
-                    # ✅ Crear el diccionario con los datos para el PDF
-                        fecha_hoy = datetime.now().strftime("%d/%m/%Y")
-                        datos_pdf = {
-                            "cliente": "Juan Perez",
-                            "orden": "12345",
-                            "unidades": "50",
-                            "elementos_por_unidad": "3",
-                            "fecha": str(fecha_hoy),
-                            "piezas": "10",
-                            "entrega": "25/07/2025",
-                            
-                            "watts": watts_value,
-                            "volts": volts_value,
-                            "Ampers": f"{amps_calc:.2f}",
-                            "ohms": f"{ohms_calc:.2f}",
-                            
-                            "Material": "Acero Inoxidable",
-                            "Diametro": selected_diameter,
-                            "largo": f"{desarrollo_tubo:.0f}", #change this to desarrollo
-                            "calibre": str(calibre_calc),
-                            "Husillo": str(husillo),
-                            "bobina a": str(ohms_bobina),
-                            "Long Bobina": f"{bobina_sin_estirar:.2f}",
-                            "Cortar a": f"{cortar_tubo:.0f}",
-                        }
-                        agregar_texto_centrado(largo_value,ancho_value)
-                    else : 
+                        
+                        # Agregar imagen con medidas (solo si es válido)
+                        radio_interno = results.get("radio_interno", 0)
+                        print(f"🖼️ Generando imagen con valores: Largo={largo}, Ancho={ancho}, Radio={radio_interno}")
+
+                        agregar_texto_centrado_u(largo, 
+                                                ancho,  
+                                                radio_interno)
+                        
+                        # Actualizar datos_pdf con resultados válidos
+                        datos_pdf.update({
+                            "Ampers": f"{results['amps']:.2f}",
+                            "ohms": f"{results['ohms']:.2f}",
+                            "ohms_tol_ab" : f"{results['ohms_tol_ab']:.2f}",
+                            "ohms_tol_ar" : f"{results['ohms_tol_ar']:.2f}",
+                            "largo": f"{results['largo_tubo']:.0f}",
+                            "calibre": str(results["calibre"]),
+                            "Husillo": str(results["husillo"]),
+                            "bobina a": str(results["bobina_ohms"]),
+                            "Long Bobina": f"{results['bobina_sin_estirar']:.2f}",
+                            "Cortar a": f"{results['cortar_tubo']:.0f}",
+                        })
+                    else:
                         print("❌ No se encontró calibre válido")
                         print("➡️ Mejor candidato:", results["mejor_candidato"])
                         
-                        # Valores por defecto o manejo de error
-                        amps_calc = results["amps"]
-                        ohms_calc = results["ohms"]
-                        calibre_calc = "No válido"
-                        desarrollo_tubo = "No calculado"
-                        
-                        # Crear diccionario con valores por defecto
-                        datos_pdf = {
-                            "cliente": "Juan Perez",
-                            "orden": "12345",
-                            "unidades": "50",
-                            "elementos_por_unidad": "3",
-                            "fecha": "18/07/2025",
-                            "piezas": "10",
-                            "entrega": "25/07/2025",
-                            
-                            "watts": watts_value,
-                            "volts": volts_value,
-                            "Ampers": f"{amps_calc:.2f}",
-                            "ohms": f"{ohms_calc:.2f}",
-                            
-                            "Material": "Acero Inoxidable",
-                            "Diametro": selected_diameter,
+                        # Actualizar datos_pdf con valores por defecto/error
+                        datos_pdf.update({
+                            "Ampers": f"{results['amps']:.2f}",
+                            "ohms": f"{results['ohms']:.2f}",
                             "largo": "No calculado",
                             "calibre": "No válido",
                             "Husillo": "3/8",
                             "bobina a": "21",
                             "Long Bobina": "no valido",
                             "Cortar a": "no valido",
-                        } 
-                
+                        })
+                    generar_pdf_U(datos_pdf)
+
                 except ValueError:
-                    output_text += "fnisafsajfnsa"
-                generar_pdf_U(datos_pdf)
+                    output_text += "\nError: Los valores ingresados no son números válidos."
 
 
             elif tab_name == "Tubular en W":
@@ -923,11 +916,16 @@ def run_power_calculator_app():
                     output_text += f"\nDiámetro Seleccionado: {selected_diameter}"
                 
                 # Capturar los valores de la interfaz
+                cliente = entries["Cliente"].get()
+                N_orden = entries["Numero_de_Orden"].get()
+                unidades = entries["unidades"].get()
+                elementos_por_unidad = entries["Elementos_por_unidad"].get()
                 volts_value = entries["Volts"].get()
                 watts_value = entries["Watts"].get()
                 largo_value = entries["Largo"].get()
                 largo2_value = entries["Largo2"].get()
                 ancho_value = entries["Ancho"].get()
+                tornillos_value = entries["Tornillo"].get()
 
                 # output_text += f"\n\nValores capturados para cálculos:"
                 # output_text += f"\nVoltaje: {volts_value}"
@@ -941,27 +939,31 @@ def run_power_calculator_app():
                     largo = float(largo_value)
                     largo2 = float(largo2_value)
                     ancho = float(ancho_value)
+                    tornillos = float(tornillos_value)
+                    elementos_por_unidad = float(elementos_por_unidad)
+                    unidades = float(unidades)
+                    piezas = elementos_por_unidad*unidades
                     
-                    # Llamar a la función de cálculo (¡usa las variables reales, no valores fijos!)
+                    # Llamar a la función de cálculo 
                     results = calcular_tubular_w(
-                        diam_tubo=selected_diameter,  # Usar selected_diameter en lugar de "3/8"
-                        watts=watts,                 # Usar watts en lugar de 500
-                        volts=volts,                 # Usar volts en lugar de 110
-                        largo_tub=largo,             # Usar largo en lugar de 160
-                        largo2=largo2,               # Usar largo2 en lugar de 125
-                        ancho=ancho,                 # Usar ancho en lugar de 100
-                        tornillos=80,
+                        diam_tubo=selected_diameter,  
+                        watts=watts,                 
+                        volts=volts,                 
+                        largo_tub=largo,             
+                        largo2=largo2,               
+                        ancho=ancho,                 
+                        tornillos=tornillos,
                     )
 
                     # Configurar valores comunes para el PDF
                     fecha_hoy = datetime.now().strftime("%d/%m/%Y")
                     datos_pdf = {
-                        "cliente": "Juan Perez",
-                        "orden": "12345",
-                        "unidades": "50",
-                        "elementos_por_unidad": "3",
+                        "cliente": str(cliente),
+                        "orden": str(N_orden),
+                        "unidades": str(unidades),
+                        "elementos_por_unidad": str(elementos_por_unidad),
                         "fecha": fecha_hoy,
-                        "piezas": "10",
+                        "piezas": str(piezas),
                         "entrega": "25/07/2025",
                         "watts": watts_value,
                         "volts": volts_value,
@@ -986,6 +988,8 @@ def run_power_calculator_app():
                         datos_pdf.update({
                             "Ampers": f"{results['amps']:.2f}",
                             "ohms": f"{results['ohms']:.2f}",
+                            "ohms_tol_ab" : f"{results['ohms_tol_ab']:.2f}",
+                            "ohms_tol_ar" : f"{results['ohms_tol_ar']:.2f}",                            
                             "largo": f"{results['largo_tubo']:.0f}",
                             "calibre": str(results["calibre"]),
                             "Husillo": str(results["husillo"]),

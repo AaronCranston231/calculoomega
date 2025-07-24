@@ -1,15 +1,10 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 
-def agregar_texto_centrado(largo_value, ancho_value):
-    """
-    Función que agrega texto a una copia de la imagen original usando los valores de largo y ancho.
-    La imagen original no se modifica.
-    
-    Args:
-        largo_value (str): Valor del largo desde la interfaz
-        ancho_value (str): Valor del ancho desde la interfaz
-    """
+def agregar_texto_centrado_u(largo_value,
+                           ancho_value,
+                           radio_interno):
+
     # Ruta de la imagen original
     ruta_imagen_original = r"C:\Users\Ulises\GUI_OMEGA\GUI\Dibujos\TubularU.jpg"
     try:
@@ -25,10 +20,20 @@ def agregar_texto_centrado(largo_value, ancho_value):
     # Crear una copia de la imagen para modificarla sin afectar la original
     imagen = imagen_original.copy()
     
+    try:
+        largo_value = float(largo_value)
+        ancho_value = float(ancho_value)
+        radio_interno = float(radio_interno)
+        
+    except ValueError:
+        print("❌ Error: Los valores deben ser numéricos.")
+        return
+    
     # Configuración del texto
     texto = f"{largo_value} mm"
     texto2 = f"{ancho_value} mm"
-    tamano = 30
+    texto3 = f" R : {radio_interno:.1f} mm "
+    tamano = 25
     color = "black"
     
     # Crear objeto para dibujar sobre la copia
@@ -41,19 +46,23 @@ def agregar_texto_centrado(largo_value, ancho_value):
         print("Usando fuente por defecto")
         fuente = ImageFont.load_default()
     
-    # Calcular posición centrada para ambos textos
+        # Cálculo de posiciones
     ancho_imagen, alto_imagen = imagen.size
-    ancho_texto1 = dibujo.textlength(texto, font=fuente)
-    ancho_texto2 = dibujo.textlength(texto2, font=fuente)
+    ancho_texto = dibujo.textlength(texto, font=fuente)
 
-    x1 = (ancho_imagen - ancho_texto1) / 2
-    y1 = alto_imagen / 5
-    x2 = (ancho_imagen - ancho_texto2) / 1.05
-    y2 = alto_imagen / 2.1
     
-    # Agregar texto sobre la copia
+    # Calcular posición centrada para ambos textos
+    x1 = (ancho_imagen - ancho_texto) / 2
+    y1 = alto_imagen / 7
+    x2 = (ancho_imagen - ancho_texto) / 0.996
+    y2 = alto_imagen / 2
+    x3 = (ancho_imagen - ancho_texto) / 1.3
+    y3 = alto_imagen / 2.1
+  
+    # Escritura del texto sobre la copia
     dibujo.text((x1, y1), texto, fill=color, font=fuente)
     dibujo.text((x2, y2), texto2, fill=color, font=fuente)
+    dibujo.text((x3, y3), texto3, fill=color, font=fuente)
     
     # Ruta de guardado para la imagen modificada
     directorio_guardado = r"C:\Users\Ulises\GUI_OMEGA\GUI\Dibujos"
@@ -75,4 +84,5 @@ def agregar_texto_centrado(largo_value, ancho_value):
 if __name__ == "__main__":
     largo_ejemplo = "150"
     ancho_ejemplo = "80"
-    agregar_texto_centrado(largo_ejemplo, ancho_ejemplo)
+    radio_interno = "11"
+    agregar_texto_centrado_u(largo_ejemplo, ancho_ejemplo, radio_interno)

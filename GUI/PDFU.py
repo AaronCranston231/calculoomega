@@ -1,6 +1,6 @@
-def generar_pdf_U(datos, plantilla_pdf=r"C:\Users\Ulises\GUI_OMEGA\ORDEN TRABAJO (3).pdf", 
-               salida_pdf="orden_trabajo_relleno.pdf",
-               imagen_path=r"C:\Users\Ulises\GUI_OMEGA\GUI\Dibujos\IMagencorregida.jpg"):
+def generar_pdf_U(datos, plantilla_pdf=r"C:\Users\Ulises\GUI_OMEGA\Ordenestrabajo\ORDEN TRABAJO (3).pdf", 
+               salida_pdf="orden_trabajo_relleno_U.pdf",
+               imagen_path=r"C:\Users\Ulises\GUI_OMEGA\GUI\Dibujos\TubularU_editada.jpg"):
     from PyPDF2 import PdfReader, PdfWriter
     from reportlab.pdfgen import canvas
     from reportlab.lib.pagesizes import letter
@@ -23,6 +23,8 @@ def generar_pdf_U(datos, plantilla_pdf=r"C:\Users\Ulises\GUI_OMEGA\ORDEN TRABAJO
     can.drawString(125, 607, datos.get("volts", ""))
     can.drawString(125, 579, datos.get("Ampers", ""))
     can.drawString(125, 553, datos.get("ohms", ""))
+    can.drawString(185, 553, datos.get("ohms_tol_ar", "") + ", " + datos.get("ohms_tol_ab", ""))
+    
 
     can.drawString(450, 637, datos.get("Material", ""))
     can.drawString(450, 607, datos.get("Diametro", ""))
@@ -63,6 +65,8 @@ if __name__ == "__main__":
         "cliente": "Cliente Ejemplo",
         "orden": "ORD-1234",
         "fecha": "2023-11-15",
+        "ohms_tol_ar" : "234",
+        "ohms_tol_ab" : "433",
         # Agrega aquí el resto de tus campos
     }
     generar_pdf_U(datos_ejemplo)

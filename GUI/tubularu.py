@@ -1,4 +1,4 @@
-def calcular_tubular_u(diam_tubo: str, watts: float, volts: float, ancho: float, largo: float, tornillos: float = 70):
+def calcular_tubular_u(diam_tubo: str, watts: float, volts: float, ancho: float, largo: float, tornillos: float ):
     import csv
     import numpy as np
 
@@ -11,20 +11,30 @@ def calcular_tubular_u(diam_tubo: str, watts: float, volts: float, ancho: float,
 
     amps = watts / volts
     ohms = volts / amps
+    ohms_tolerancia_arriba = ohms *1.05
+    ohms_tolerancia_abajo = ohms *0.95
 
     # Cálculo de desarrollo tubular
     if diam_tubo_val == 1:
-        radio_interno = ((ancho - 8) * np.pi) / 2
-        largo_efectivo = largo - 16
-        desarrollo_tubo = largo_efectivo * 2 + radio_interno
+        long_vuelta = ((ancho - 8) * np.pi) / 2
+        radio_interno = (long_vuelta/np.pi) - 0.8
+        print(f'radio interno : {radio_interno}')
+        print(f'largo : {largo}')
+        largo_efectivo = float(largo - 16)
+        print(f'largo_efectivo : {largo_efectivo}')
+        desarrollo_tubo = float(largo_efectivo*2 + long_vuelta)
+        print(f'desarrollo_tubo : {desarrollo_tubo}')
         husillo = "2mm"
+        
     else:
-        radio_interno = ((ancho - 11) * np.pi) / 2
+        long_vuelta = ((ancho - 11) * np.pi) / 2
+        radio_interno = (long_vuelta/np.pi) - 1.1
+
         largo_efectivo = largo - 22
         desarrollo_tubo = largo_efectivo * 2 + radio_interno
         husillo = "3mm"
 
-    cortar_tubo = desarrollo_tubo * 0.88
+    cortar_tubo = desarrollo_tubo - (desarrollo_tubo*0.12)
     zf = (tornillos - 20) * 2
     zc = desarrollo_tubo - zf
 
@@ -81,6 +91,8 @@ def calcular_tubular_u(diam_tubo: str, watts: float, volts: float, ancho: float,
                 "volts": volts,
                 "amps": amps,
                 "ohms": ohms,
+                "ohms_tol_ar" : ohms_tolerancia_arriba,
+                "ohms_tol_ab" : ohms_tolerancia_abajo,
                 "ohm_alambre": ohm_alambre,
                 "diam_tubo": diam_tubo,
                 "diam_alambre": diam_alambre,
@@ -88,6 +100,7 @@ def calcular_tubular_u(diam_tubo: str, watts: float, volts: float, ancho: float,
                 "largo_tubo": desarrollo_tubo,
                 "calibre": calibre,
                 "desarrollo_alambre": desarrollo_alambre,
+                "radio_interno" : radio_interno,
                 "num_vueltas": num_vueltas,
                 "paso": paso,
                 "separacion": separacion,

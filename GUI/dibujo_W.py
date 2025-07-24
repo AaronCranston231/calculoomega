@@ -5,7 +5,7 @@ def agregar_texto_centradoW(largo_value,
                             ancho_value,
                             largo2_value,
                             radio_value):
-    ruta_imagen_original = r"C:\Users\Ulises\GUI_OMEGA\GUI\Dibujos\TUBULARW.jpg"
+    ruta_imagen_original = r"C:\Users\Ulises\GUI_OMEGA\GUI\Dibujos\TUBULARWFINAL.jpg"
     try:
         imagen_original = Image.open(ruta_imagen_original)
     except FileNotFoundError:
@@ -41,14 +41,13 @@ def agregar_texto_centradoW(largo_value,
     ancho_texto = dibujo.textlength(texto1, font=fuente)
 
     x1 = (ancho_imagen - ancho_texto) / 2
-    y1 = alto_imagen / 15
+    y1 = alto_imagen / 5.7
     x2 = (ancho_imagen - ancho_texto) / 0.996
     y2 = alto_imagen / 2
     x3 = (ancho_imagen - ancho_texto) / 2
-    y3 = alto_imagen / 2.1
-    x4 = (ancho_imagen - ancho_texto) / 4.5
-    y4 = alto_imagen / 2.15
-
+    y3 = alto_imagen / 3.85
+    x4 = (ancho_imagen - ancho_texto) / 6.05
+    y4 = alto_imagen / 2.05
     # Escritura del texto sobre la copia
     dibujo.text((x1, y1), texto1, fill=color, font=fuente)
     dibujo.text((x2, y2), texto2, fill=color, font=fuente)

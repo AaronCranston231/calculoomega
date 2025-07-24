@@ -1,6 +1,6 @@
 
 
-def generar_pdf_W(datos, plantilla_pdf=r"C:\Users\Ulises\GUI_OMEGA\ORDEN TRABAJO (3).pdf", 
+def generar_pdf_W(datos, plantilla_pdf=r"C:\Users\Ulises\GUI_OMEGA\Ordenestrabajo\ORDEN TRABAJO (3).pdf", 
                salida_pdf="orden_trabajoW_relleno.pdf",
                imagen_path=r"C:\Users\Ulises\GUI_OMEGA\GUI\Dibujos\TubularW_editada.jpg"):
     from PyPDF2 import PdfReader, PdfWriter
@@ -25,6 +25,7 @@ def generar_pdf_W(datos, plantilla_pdf=r"C:\Users\Ulises\GUI_OMEGA\ORDEN TRABAJO
     can.drawString(125, 607, datos.get("volts", ""))
     can.drawString(125, 579, datos.get("Ampers", ""))
     can.drawString(125, 553, datos.get("ohms", ""))
+    can.drawString(185, 553, datos.get("ohms_tol_ar", "") + ", " + datos.get("ohms_tol_ab", ""))
 
     can.drawString(450, 637, datos.get("Material", ""))
     can.drawString(450, 607, datos.get("Diametro", ""))
