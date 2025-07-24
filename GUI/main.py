@@ -7,7 +7,7 @@ from tubularu import calcular_tubular_u
 from datetime import datetime
 from dibujo_U import agregar_texto_centrado_u
 from dibujo_W import agregar_texto_centradoW
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "Orden_final")))
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "Orden_final")))
 from PDFU import generar_pdf_U  # o la función que definiste
 from PDFW import generar_pdf_W
 from tubularw import calcular_tubular_w

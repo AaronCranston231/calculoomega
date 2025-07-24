@@ -1,3 +1,16 @@
+import sys
+import os
+import csv
+
+def get_resource_path(relative_path):
+    """Obtener la ruta correcta para recursos en ejecutables"""
+    try:
+        # PyInstaller crea una carpeta temporal y almacena la ruta en _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 def calcular_tubular_u(diam_tubo: str, watts: float, volts: float, ancho: float, largo: float, tornillos: float ):
     import csv
     import numpy as np
@@ -40,13 +53,40 @@ def calcular_tubular_u(diam_tubo: str, watts: float, volts: float, ancho: float,
 
     # Leer tabla de calibres
     datos = []
-    with open("tabla_calibres.csv", newline='') as archivo_csv:
-        reader = csv.DictReader(archivo_csv)
-        for fila in reader:
-            fila["Calibre"] = int(fila["Calibre"])
-            fila["ESPEC"] = float(fila["ESPEC"])
-            fila["Ohms"] = float(fila["Ohms"])
-            datos.append(fila)
+    csv_path = get_resource_path("tabla_calibres.csv")
+    print(f"Buscando CSV en: {csv_path}")  # Para debugging
+    
+    try:
+        with open(csv_path, newline='') as archivo_csv:
+            reader = csv.DictReader(archivo_csv)
+            for fila in reader:
+                fila["Calibre"] = int(fila["Calibre"])
+                fila["ESPEC"] = float(fila["ESPEC"])
+                fila["Ohms"] = float(fila["Ohms"])
+                datos.append(fila)
+    except FileNotFoundError:
+        print(f"❌ Error: No se encontró el archivo CSV en {csv_path}")
+        # Verificar qué archivos están disponibles
+        try:
+            base_path = sys._MEIPASS
+            print("Archivos disponibles en _MEIPASS:")
+            for file in os.listdir(base_path):
+                print(f"  - {file}")
+        except:
+            print("Archivos disponibles en directorio actual:")
+            for file in os.listdir("."):
+                print(f"  - {file}")
+        
+        # Retornar valores por defecto para que no crashee
+        return {
+            "valido": False,
+            "mensaje": "Error: archivo CSV no encontrado",
+            "amps": amps,
+            "ohms": ohms,
+            "ohms_tol_ab": ohms_tolerancia_abajo,
+            "ohms_tol_ar": ohms_tolerancia_arriba,
+            "mejor_candidato": None
+        }
 
     # Variables para guardar mejor resultado
     calibre_valido = None
@@ -126,6 +166,7 @@ def calcular_tubular_u(diam_tubo: str, watts: float, volts: float, ancho: float,
         "valido": False,
         "mejor_candidato": mejor_candidato,
         "amps": amps,
-        "ohms": ohms
-        
+        "ohms": ohms,
+        "ohms_tol_ab": ohms_tolerancia_abajo,
+        "ohms_tol_ar": ohms_tolerancia_arriba
     }

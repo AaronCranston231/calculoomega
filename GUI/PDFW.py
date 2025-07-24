@@ -1,13 +1,26 @@
-
-
-def generar_pdf_W(datos, plantilla_pdf=r"C:\Users\Ulises\GUI_OMEGA\Ordenestrabajo\ORDEN TRABAJO (3).pdf", 
-               salida_pdf="orden_trabajoW_relleno.pdf",
-               imagen_path=r"C:\Users\Ulises\GUI_OMEGA\GUI\Dibujos\TubularW_editada.jpg"):
+def generar_pdf_W(datos, 
+                  plantilla_pdf=None, 
+                  salida_pdf="orden_trabajoW_relleno.pdf",
+                  imagen_path=None):
     from PyPDF2 import PdfReader, PdfWriter
     from reportlab.pdfgen import canvas
     from reportlab.lib.pagesizes import letter
     from reportlab.lib.utils import ImageReader
     import io
+    import os
+
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+    if plantilla_pdf is None:
+        plantilla_pdf = os.path.join(BASE_DIR, "ORDEN TRABAJO (3).pdf")
+    if imagen_path is None:
+        imagen_path = os.path.join(BASE_DIR, "Dibujos", "TubularW_editada.jpg")
+
+    # Crear carpeta de salida si no existe
+    carpeta_salida = os.path.join(BASE_DIR, "ordenes_trabajo_W")
+    os.makedirs(carpeta_salida, exist_ok=True)
+
+    salida_pdf_path = os.path.join(carpeta_salida, salida_pdf)
 
     packet = io.BytesIO()
     can = canvas.Canvas(packet, pagesize=letter)
@@ -39,7 +52,7 @@ def generar_pdf_W(datos, plantilla_pdf=r"C:\Users\Ulises\GUI_OMEGA\Ordenestrabaj
     can.drawString(485, 475, datos.get("Cortar a", ""))
     can.drawString(486, 445, datos.get("Diametro", ""))
 
-    # Insertar la imagen (ajusta las coordenadas y tamaño según necesites)
+    # Insertar la imagen
     try:
         img = ImageReader(imagen_path)
         can.drawImage(img, 50, 10, width=500, height=400, preserveAspectRatio=True)
@@ -57,6 +70,18 @@ def generar_pdf_W(datos, plantilla_pdf=r"C:\Users\Ulises\GUI_OMEGA\Ordenestrabaj
     page.merge_page(new_pdf.pages[0])
     output.add_page(page)
 
-    with open(salida_pdf, "wb") as f:
+    with open(salida_pdf_path, "wb") as f:
         output.write(f)
 
+
+if __name__ == "__main__":
+    # Datos de ejemplo para prueba
+    datos_ejemplo = {
+        "cliente": "Cliente Ejemplo",
+        "orden": "ORD-1234",
+        "fecha": "2023-11-15",
+        "ohms_tol_ar" : "234",
+        "ohms_tol_ab" : "433",
+        # Agrega aquí el resto de tus campos
+    }
+    generar_pdf_W(datos_ejemplo)

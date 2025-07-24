@@ -1,12 +1,19 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
+import sys
 
 def agregar_texto_centrado_u(largo_value,
                            ancho_value,
                            radio_interno):
 
+    if getattr(sys, 'frozen', False):
+        base_path = sys._MEIPASS  # Cuando está empaquetado
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    
+    ruta_imagen_original = os.path.join(base_path, "Dibujos", "TubularU.jpg")
+
     # Ruta de la imagen original
-    ruta_imagen_original = r"C:\Users\Ulises\GUI_OMEGA\GUI\Dibujos\TubularU.jpg"
     try:
         # Abrir la imagen original
         imagen_original = Image.open(ruta_imagen_original)
@@ -65,7 +72,7 @@ def agregar_texto_centrado_u(largo_value,
     dibujo.text((x3, y3), texto3, fill=color, font=fuente)
     
     # Ruta de guardado para la imagen modificada
-    directorio_guardado = r"C:\Users\Ulises\GUI_OMEGA\GUI\Dibujos"
+    directorio_guardado = os.path.join(base_path, "Dibujos")
     nombre_archivo = "TubularU_editada.jpg"  # <- Se cambia el nombre para no sobreescribir
     ruta_completa = os.path.join(directorio_guardado, nombre_archivo)
     

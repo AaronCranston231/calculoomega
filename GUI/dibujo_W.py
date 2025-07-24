@@ -1,11 +1,20 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
+import sys
 
 def agregar_texto_centradoW(largo_value, 
                             ancho_value,
                             largo2_value,
                             radio_value):
-    ruta_imagen_original = r"C:\Users\Ulises\GUI_OMEGA\GUI\Dibujos\TUBULARWFINAL.jpg"
+   
+    if getattr(sys, 'frozen', False):
+        base_path = sys._MEIPASS  # Cuando está empaquetado
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+
+    # Ruta relativa a la imagen original
+    ruta_imagen_original = os.path.join(base_path, "Dibujos", "TUBULARWFINAL.jpg")
+   
     try:
         imagen_original = Image.open(ruta_imagen_original)
     except FileNotFoundError:
